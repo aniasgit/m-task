@@ -1,0 +1,12 @@
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem;
+}
+
+h1 {
+  color: #1976d2;
+  text-transform: uppercase;
+}
