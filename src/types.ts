@@ -9,6 +9,9 @@ export type itemType = {
 export type dataType = {
   items: itemType[];
   total: number;
+};
+
+export type paramsType = {
   page: number;
   pageSize: number;
   order: "desc" | "asc";

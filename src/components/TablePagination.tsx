@@ -22,7 +22,11 @@ export const TablePagination = ({
       color="primary"
       disabled={disabled}
       onChange={(_event, page) => onChange(page)}
-      sx={{ justifyContent: "center" }}
+      sx={{
+        width: { xs: 280, sm: 460 },
+        ul: { justifyContent: "center" },
+        li: { mb: "8px" },
+      }}
     />
   );
 };
