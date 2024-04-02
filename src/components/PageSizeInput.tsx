@@ -24,21 +24,12 @@ export const PageSizeInput = ({
 
   const [error, setError] = useState((size && validate(size)) || "");
   const [value, setValue] = useState(size?.toString() || "");
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
   const isError = error !== "";
 
   const handleChange = (enteredValue: string) => {
     setValue(enteredValue);
-    const error = validate(+enteredValue);
-
-    if (error === "") {
-      onChange(+enteredValue);
-      onValidation(false);
-      setError("");
-    } else {
-      setError(error);
-      onValidation(true);
-    }
   };
 
   const handleBlur = () => {
@@ -51,9 +42,33 @@ export const PageSizeInput = ({
     }
   }, [isError, onValidation]);
 
-  console.log("render pagesizeinput");
-  console.log(size);
-  console.log("error: " + error);
+  useEffect(() => {
+    setValue(size?.toString() || "");
+  }, [size]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value]);
+
+  useEffect(() => {
+    const error = validate(+debouncedValue);
+
+    if (error === "") {
+      onChange(+debouncedValue);
+      onValidation(false);
+      setError("");
+    } else {
+      setError(error);
+      onValidation(true);
+    }
+  }, [debouncedValue, onChange, onValidation, validate]);
+
   return (
     <TextField
       id="page-size"

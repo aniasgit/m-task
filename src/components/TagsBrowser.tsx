@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { paramsType } from "../types";
+import { convertQueryStringToObject } from "../utils";
 import { PageSizeInput, TagsTable } from ".";
 
-const initParamsState: paramsType = {
+const initParams: paramsType = {
   page: 1,
   pageSize: 10,
   order: "desc",
@@ -12,8 +14,12 @@ const initParamsState: paramsType = {
 
 export const TagsBrowser = () => {
   const [isValidationError, setIsValidationError] = useState(false);
-  const [params, setParams] = useState({ ...initParamsState });
+  const [params, setParams] = useState({ ...initParams });
   const { page, pageSize, order, sort } = params;
+
+  const navigate = useNavigate();
+
+  const { search } = useLocation();
 
   const fetchData = () =>
     fetch(
@@ -25,40 +31,63 @@ export const TagsBrowser = () => {
     queryFn: async () => fetchData(),
   });
 
+  const handlePageSizeChange = useCallback(
+    (size: number) => {
+      navigate(`/?page=${page}&pageSize=${size}&order=${order}&sort=${sort}`);
+    },
+    [page, order, sort, navigate]
+  );
+
+  const handlePageChange = (newPage: number) => {
+    navigate(
+      `/?page=${newPage}&pageSize=${pageSize}&order=${order}&sort=${sort}`
+    );
+  };
+
+  const handleSortChange = (sortBy: string, changedOrder: "asc" | "desc") => {
+    navigate(
+      `/?page=1&pageSize=${pageSize}&order=${changedOrder}&sort=${sortBy}`
+    );
+  };
+
+  useEffect(() => {
+    if (search === "") {
+      setParams({ ...initParams });
+    } else {
+      const urlParams = convertQueryStringToObject(search);
+      console.log("urlParams");
+      console.log(urlParams);
+      if (
+        urlParams.page !== "" &&
+        urlParams.pageSize !== "" &&
+        urlParams.sort !== "" &&
+        urlParams.order !== ""
+      ) {
+        setParams({
+          page: +urlParams.page,
+          pageSize: +urlParams.pageSize,
+          sort: urlParams.sort,
+          order: urlParams.order as "asc" | "desc",
+        });
+      } else setParams({ ...initParams });
+    }
+  }, [search]);
+
+  console.log("search: " + search);
+  console.log("params:");
+  console.log(params);
+  console.log("status: " + status);
+  console.log("data:");
   console.log(data);
-
-  const handlePageSizeChange = (size: number) => {
-    setParams((prevParams) => {
-      return { ...prevParams, pageSize: size };
-    });
-  };
-
-  const handlePageChange = (page: number) => {
-    setParams((prevParams) => {
-      return {
-        ...prevParams,
-        page: page,
-      };
-    });
-  };
-
-  const handleSortChange = (sortBy: string, order: "asc" | "desc") => {
-    setParams((prevParams) => {
-      return {
-        ...prevParams,
-        sort: sortBy,
-        order: order,
-        page: 1,
-      };
-    });
-  };
-
   return (
     <main>
       <PageSizeInput
         size={params.pageSize}
         onChange={handlePageSizeChange}
-        onValidation={(hasError: boolean) => setIsValidationError(hasError)}
+        onValidation={useCallback(
+          (hasError: boolean) => setIsValidationError(hasError),
+          []
+        )}
       />
       <TagsTable
         data={data && { items: data.items, total: data.total }}
