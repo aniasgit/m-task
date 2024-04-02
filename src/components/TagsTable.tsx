@@ -8,12 +8,14 @@ import Paper from "@mui/material/Paper";
 import { SortButton, TablePagination, Skeleton } from ".";
 import { dataType, itemType, paramsType } from "../types";
 import { useEffect, useState } from "react";
+import Alert from "@mui/material/Alert";
 
 interface TagsTableInterface {
   data?: dataType;
   params: paramsType;
   status: "pending" | "error" | "success";
   isValidationError: boolean;
+  error: Error | null;
   onPageChange: (page: number) => void;
   onSortChange: (sortBy: string, order: "asc" | "desc") => void;
 }
@@ -23,6 +25,7 @@ export const TagsTable = ({
   params,
   status,
   isValidationError,
+  error,
   onPageChange,
   onSortChange,
 }: TagsTableInterface) => {
@@ -37,13 +40,6 @@ export const TagsTable = ({
     return skeletonArr;
   };
 
-  // if (isSuccess) {
-  //   setTagsData({ items: data.items, total: data.total as number });
-  // }
-
-  // const { items: rows, total } = data;
-  // // const rows = items;
-  // const count = Math.ceil(total / pageSize);
   useEffect(() => {
     if (data) {
       setCount(Math.ceil(data.total / pageSize));
@@ -58,7 +54,6 @@ export const TagsTable = ({
         flexDirection: "column",
         alignItems: "center",
         padding: { xs: "1rem 0.25rem", sm: "1rem" },
-        // my: "2rem",
       }}>
       <Table sx={{ width: { xs: 280, sm: 460 } }} aria-label="simple table">
         <TableHead>
@@ -84,6 +79,17 @@ export const TagsTable = ({
           </TableRow>
         </TableHead>
         <TableBody>
+          {status === "error" && (
+            <TableRow
+              sx={{
+                padding: "1rem",
+                "&:last-child td, &:last-child th": { border: 0 },
+              }}>
+              <TableCell colSpan={2}>
+                <Alert severity="error">{error && error.message}</Alert>
+              </TableCell>
+            </TableRow>
+          )}
           {status === "pending" &&
             createSkeleton().map((skeleton, index) => (
               <TableRow

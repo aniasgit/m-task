@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { TextField } from "@mui/material";
 
 interface PageSizeInputInterface {
@@ -12,24 +12,40 @@ export const PageSizeInput = ({
   onChange,
   onValidation,
 }: PageSizeInputInterface) => {
-  const validate = useCallback((pageSize: number) => {
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>();
+
+  const validate = (pageSize: number) => {
     if (!Number.isInteger(pageSize)) {
       return "Please enter an integer.";
     } else if (pageSize <= 0) {
-      return "Please enter an integer greater than zero.";
+      return "Please enter an integer greater than zero";
+    } else if (pageSize > 100) {
+      return "Maximum page size is 100.";
     }
 
     return "";
-  }, []);
+  };
 
   const [error, setError] = useState((size && validate(size)) || "");
   const [value, setValue] = useState(size?.toString() || "");
-  const [debouncedValue, setDebouncedValue] = useState(value);
 
   const isError = error !== "";
 
   const handleChange = (enteredValue: string) => {
+    clearTimeout(timer.current);
     setValue(enteredValue);
+    timer.current = setTimeout(() => {
+      const error = validate(+enteredValue);
+
+      if (error === "") {
+        onChange(+enteredValue);
+        onValidation(false);
+        setError("");
+      } else {
+        setError(error);
+        onValidation(true);
+      }
+    }, 300);
   };
 
   const handleBlur = () => {
@@ -44,30 +60,8 @@ export const PageSizeInput = ({
 
   useEffect(() => {
     setValue(size?.toString() || "");
+    console.log("ustawiono input");
   }, [size]);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, 300);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value]);
-
-  useEffect(() => {
-    const error = validate(+debouncedValue);
-
-    if (error === "") {
-      onChange(+debouncedValue);
-      onValidation(false);
-      setError("");
-    } else {
-      setError(error);
-      onValidation(true);
-    }
-  }, [debouncedValue, onChange, onValidation, validate]);
 
   return (
     <TextField

@@ -21,22 +21,33 @@ export const TagsBrowser = () => {
 
   const { search } = useLocation();
 
-  const fetchData = () =>
-    fetch(
+  const fetchData = async () => {
+    const response = await fetch(
       `https://api.stackexchange.com/2.3/tags?page=${page}&pagesize=${pageSize}&order=${order}&sort=${sort}&site=stackoverflow&filter=!nNPvSNVZJS`
-    ).then((res) => res.json());
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.log(data);
+      throw new Error(data.error_message);
+    }
+
+    return data;
+  };
 
   const { status, data, error } = useQuery({
     queryKey: ["tags", pageSize, page, order, sort],
-    queryFn: async () => fetchData(),
+    queryFn: async () => await fetchData(),
   });
 
-  const handlePageSizeChange = useCallback(
-    (size: number) => {
-      navigate(`/?page=${page}&pageSize=${size}&order=${order}&sort=${sort}`);
-    },
-    [page, order, sort, navigate]
-  );
+  const handlePageSizeChange = (size: number) => {
+    navigate(`/?page=${page}&pageSize=${size}&order=${order}&sort=${sort}`);
+  };
+
+  const handlePageSizeInputValidate = useCallback((hasError: boolean) => {
+    setIsValidationError(hasError);
+  }, []);
 
   const handlePageChange = (newPage: number) => {
     navigate(
@@ -57,37 +68,28 @@ export const TagsBrowser = () => {
       const urlParams = convertQueryStringToObject(search);
       console.log("urlParams");
       console.log(urlParams);
-      if (
-        urlParams.page !== "" &&
-        urlParams.pageSize !== "" &&
-        urlParams.sort !== "" &&
-        urlParams.order !== ""
-      ) {
-        setParams({
-          page: +urlParams.page,
-          pageSize: +urlParams.pageSize,
-          sort: urlParams.sort,
-          order: urlParams.order as "asc" | "desc",
-        });
-      } else setParams({ ...initParams });
+      setParams({
+        page: +urlParams.page || initParams.page,
+        pageSize: +urlParams.pageSize || initParams.pageSize,
+        sort: urlParams.sort || initParams.sort,
+        order: (urlParams.order as "asc" | "desc") || initParams.order,
+      });
     }
   }, [search]);
 
-  console.log("search: " + search);
+  // console.log("search: " + search);
   console.log("params:");
   console.log(params);
-  console.log("status: " + status);
-  console.log("data:");
-  console.log(data);
+  // console.log("status: " + status);
+  // console.log("data:");
+  // console.log(data);
+  // console.log("error: " + error?.message);
   return (
     <main>
       <PageSizeInput
         size={params.pageSize}
         onChange={handlePageSizeChange}
-        onValidation={useCallback(
-          (hasError: boolean) => setIsValidationError(hasError),
-          []
-        )}
+        onValidation={handlePageSizeInputValidate}
       />
       <TagsTable
         data={data && { items: data.items, total: data.total }}
@@ -96,6 +98,7 @@ export const TagsBrowser = () => {
         isValidationError={isValidationError}
         onPageChange={handlePageChange}
         onSortChange={handleSortChange}
+        error={error}
       />
     </main>
   );
