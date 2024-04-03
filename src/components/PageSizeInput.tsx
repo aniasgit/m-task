@@ -48,8 +48,13 @@ export const PageSizeInput = ({
     }, 300);
   };
 
-  const handleBlur = () => {
-    onValidation(isError);
+  const handleBlur = (enteredValue: string) => {
+    if (enteredValue === "") {
+      setError("Please enter an integer greater than zero");
+      onValidation(true);
+    } else {
+      onValidation(isError);
+    }
   };
 
   useEffect(() => {
@@ -70,7 +75,7 @@ export const PageSizeInput = ({
       type="number"
       value={value}
       onChange={(event) => handleChange(event.target.value)}
-      onBlur={handleBlur}
+      onBlur={(event) => handleBlur(event.target.value)}
       error={isError}
       helperText={error}
       margin="normal"

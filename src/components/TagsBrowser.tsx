@@ -39,6 +39,8 @@ export const TagsBrowser = () => {
   const { status, data, error } = useQuery({
     queryKey: ["tags", pageSize, page, order, sort],
     queryFn: async () => await fetchData(),
+    retryDelay: 1000,
+    retry: 2,
   });
 
   const handlePageSizeChange = (size: number) => {
@@ -81,8 +83,8 @@ export const TagsBrowser = () => {
   console.log("params:");
   console.log(params);
   // console.log("status: " + status);
-  // console.log("data:");
-  // console.log(data);
+  console.log("data:");
+  console.log(data);
   // console.log("error: " + error?.message);
   return (
     <main>

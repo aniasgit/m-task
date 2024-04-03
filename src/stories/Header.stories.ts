@@ -1,17 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
-// import { fn } from '@storybook/test';
 
-import { Header } from "../components";
+import { Header as TagsHeader } from "../components";
 
 const meta = {
   title: "Header",
-  component: Header,
+  component: TagsHeader,
   tags: ["autodocs"],
-} satisfies Meta<typeof Header>;
+} satisfies Meta<typeof TagsHeader>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const TagsHeader: Story = {};
-
-// export const LoggedOut: Story = {};
+export const Header: Story = {};

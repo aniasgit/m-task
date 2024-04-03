@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { useArgs } from "@storybook/preview-api";
 import { fn } from "@storybook/test";
 import { PageSizeInput } from "../components";
 
@@ -10,6 +11,15 @@ const meta = {
   },
   tags: ["autodocs"],
   args: { onChange: fn(), onValidation: fn() },
+  render: function Render(args) {
+    const [, updateArgs] = useArgs();
+
+    function handlePageSizeChange(size: number) {
+      updateArgs({ size });
+    }
+
+    return <PageSizeInput {...args} onChange={handlePageSizeChange} />;
+  },
 } satisfies Meta<typeof PageSizeInput>;
 
 export default meta;

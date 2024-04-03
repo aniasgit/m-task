@@ -1,3 +1,5 @@
+import { itemType, paramsType } from "./types";
+
 export const DUMMY_DATA = {
   items: [
     {
@@ -234,4 +236,43 @@ export const DUMMY_DATA = {
     },
   ],
   total: 20,
+};
+
+const compareCount = (a: itemType, b: itemType) => {
+  return a.count - b.count;
+};
+
+const compareName = (a: itemType, b: itemType) => {
+  const nameA = a.name.toUpperCase();
+  const nameB = b.name.toUpperCase();
+  if (nameA < nameB) {
+    return -1;
+  } else if (nameA > nameB) {
+    return 1;
+  }
+
+  return 0;
+};
+
+export const getData = (params: paramsType) => {
+  console.log(params);
+  const items = [...DUMMY_DATA.items];
+
+  if (params.sort === "name") {
+    items.sort(compareName);
+  } else if (params.sort === "popular") {
+    items.sort(compareCount);
+  }
+
+  if (params.order === "desc") {
+    items.reverse();
+  }
+
+  const startIndex = (params.page - 1) * params.pageSize;
+  const endIndex = startIndex + params.pageSize;
+
+  const resultItems = items.slice(startIndex, endIndex);
+
+  console.log(resultItems);
+  return { items: resultItems, total: DUMMY_DATA.items.length };
 };

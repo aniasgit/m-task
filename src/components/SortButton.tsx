@@ -38,6 +38,7 @@ export const SortButton = ({
       disabled={disabled}
       sx={{
         gap: "0.5rem",
+        padding: "1rem",
         "&:hover": { svg: { opacity: "1" } },
       }}>
       <p>{children}</p>

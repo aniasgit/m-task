@@ -58,7 +58,7 @@ export const TagsTable = ({
       <Table sx={{ width: { xs: 280, sm: 460 } }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>
+            <TableCell sx={{ width: "50%", padding: 0, pb: "0.5rem" }}>
               <SortButton
                 onClick={onSortChange}
                 sortBy="name"
@@ -67,7 +67,9 @@ export const TagsTable = ({
                 {"Tag's name"}
               </SortButton>
             </TableCell>
-            <TableCell align="right" sx={{ paddingRight: 0 }}>
+            <TableCell
+              align="right"
+              sx={{ width: "50%", padding: 0, pb: "0.5rem" }}>
               <SortButton
                 onClick={onSortChange}
                 sortBy="popular"
@@ -106,11 +108,10 @@ export const TagsTable = ({
               <TableRow
                 key={item.name}
                 sx={{
+                  fontSize: "0.875rem",
                   "&:last-child td, &:last-child th": { border: 0 },
                 }}>
-                <TableCell component="th" scope="row">
-                  {item.name}
-                </TableCell>
+                <TableCell>{item.name}</TableCell>
                 <TableCell align="right">{item.count}</TableCell>
               </TableRow>
             ))}

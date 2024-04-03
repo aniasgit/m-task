@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
+import { useArgs } from "@storybook/preview-api";
 import { SortButton } from "../components";
 
 const meta = {
@@ -10,12 +11,26 @@ const meta = {
   },
   tags: ["autodocs"],
   args: { onClick: fn() },
+  render: function Render(args) {
+    const [{ sortBy, order }, updateArgs] = useArgs();
+
+    function handleBtnClick(sortBy: string, order: "asc" | "desc") {
+      updateArgs({ order: order, sortBy: sortBy });
+    }
+    return (
+      <SortButton
+        {...args}
+        onClick={handleBtnClick}
+        sortBy={sortBy}
+        order={order}
+      />
+    );
+  },
 } satisfies Meta<typeof SortButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const WithoutDefaultSortingOrder: Story = {
   args: {
     children: "Name",

@@ -4,7 +4,7 @@ export const Skeleton = () => {
   return (
     <MuiSkeleton
       variant="text"
-      sx={{ displa: "flex", fontSize: "1rem" }}
+      sx={{ fontSize: "0.875rem" }}
       animation="wave"
     />
   );
