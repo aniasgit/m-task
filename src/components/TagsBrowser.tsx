@@ -29,7 +29,6 @@ export const TagsBrowser = () => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.log(data);
       throw new Error(data.error_message);
     }
 
@@ -68,8 +67,6 @@ export const TagsBrowser = () => {
       setParams({ ...initParams });
     } else {
       const urlParams = convertQueryStringToObject(search);
-      console.log("urlParams");
-      console.log(urlParams);
       setParams({
         page: +urlParams.page || initParams.page,
         pageSize: +urlParams.pageSize || initParams.pageSize,
@@ -79,13 +76,6 @@ export const TagsBrowser = () => {
     }
   }, [search]);
 
-  // console.log("search: " + search);
-  console.log("params:");
-  console.log(params);
-  // console.log("status: " + status);
-  console.log("data:");
-  console.log(data);
-  // console.log("error: " + error?.message);
   return (
     <main>
       <PageSizeInput

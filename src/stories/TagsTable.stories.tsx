@@ -41,8 +41,6 @@ export const WithData: Story = {
         data: getData({ ...params, sort: sortBy, order }),
       });
     }
-    console.log(args.params);
-    console.log(args.data);
 
     return (
       <TagsTable

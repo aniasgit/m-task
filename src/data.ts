@@ -255,7 +255,6 @@ const compareName = (a: itemType, b: itemType) => {
 };
 
 export const getData = (params: paramsType) => {
-  console.log(params);
   const items = [...DUMMY_DATA.items];
 
   if (params.sort === "name") {
@@ -273,6 +272,5 @@ export const getData = (params: paramsType) => {
 
   const resultItems = items.slice(startIndex, endIndex);
 
-  console.log(resultItems);
   return { items: resultItems, total: DUMMY_DATA.items.length };
 };

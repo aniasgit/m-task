@@ -65,7 +65,6 @@ export const PageSizeInput = ({
 
   useEffect(() => {
     setValue(size?.toString() || "");
-    console.log("ustawiono input");
   }, [size]);
 
   return (
