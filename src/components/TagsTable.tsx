@@ -66,7 +66,7 @@ export const TagsTable = ({
                 sortBy="name"
                 order={sort === "name" ? order : undefined}
                 disabled={isValidationError}>
-                {"Tag's name"}
+                Tag's name
               </SortButton>
             </TableCell>
             <TableCell
@@ -99,7 +99,7 @@ export const TagsTable = ({
               <TableRow
                 key={index}
                 sx={{
-                  "&:last-child td, &:last-child th": { border: 0 },
+                  "&:last-child td": { border: 0 },
                 }}>
                 <TableCell>{skeleton}</TableCell>
                 <TableCell>{skeleton}</TableCell>
@@ -111,7 +111,7 @@ export const TagsTable = ({
                 key={item.name}
                 sx={{
                   fontSize: "0.875rem",
-                  "&:last-child td, &:last-child th": { border: 0 },
+                  "&:last-child td": { border: 0 },
                 }}>
                 <TableCell>{item.name}</TableCell>
                 <TableCell align="right">{item.count}</TableCell>

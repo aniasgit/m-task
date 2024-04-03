@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useArgs } from "@storybook/preview-api";
 import { fn } from "@storybook/test";
 import { TagsTable } from "../components";
-import { getData } from "../data";
+import { getData } from "./data";
 
 const meta = {
   title: "TagsTable",
@@ -37,8 +37,8 @@ export const WithData: Story = {
 
     function handleSortChange(sortBy: string, order: "asc" | "desc") {
       updateArgs({
-        params: { ...params, sort: sortBy, order },
-        data: getData({ ...params, sort: sortBy, order }),
+        params: { ...params, sort: sortBy, order, page: 1 },
+        data: getData({ ...params, sort: sortBy, order, page: 1 }),
       });
     }
 

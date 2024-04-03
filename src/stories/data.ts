@@ -1,4 +1,4 @@
-import { itemType, paramsType } from "./types";
+import { itemType, paramsType } from "../types";
 
 export const DUMMY_DATA = {
   items: [

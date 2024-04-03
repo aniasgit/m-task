@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { paramsType } from "../types";
@@ -14,12 +14,20 @@ const initParams: paramsType = {
 
 export const TagsBrowser = () => {
   const [isValidationError, setIsValidationError] = useState(false);
-  const [params, setParams] = useState({ ...initParams });
-  const { page, pageSize, order, sort } = params;
 
   const navigate = useNavigate();
 
   const { search } = useLocation();
+
+  const urlParams = convertQueryStringToObject(search);
+  const params: paramsType = {
+    page: +urlParams.page || initParams.page,
+    pageSize: +urlParams.pageSize || initParams.pageSize,
+    sort: urlParams.sort || initParams.sort,
+    order: (urlParams.order as "asc" | "desc") || initParams.order,
+  };
+
+  const { page, pageSize, order, sort } = params;
 
   const fetchData = async () => {
     const response = await fetch(
@@ -37,18 +45,18 @@ export const TagsBrowser = () => {
 
   const { status, data, error } = useQuery({
     queryKey: ["tags", pageSize, page, order, sort],
-    queryFn: async () => await fetchData(),
+    queryFn: fetchData,
     retryDelay: 1000,
     retry: 2,
   });
 
-  const handlePageSizeChange = (size: number) => {
-    navigate(`/?page=${page}&pageSize=${size}&order=${order}&sort=${sort}`);
-  };
-
   const handlePageSizeInputValidate = useCallback((hasError: boolean) => {
     setIsValidationError(hasError);
   }, []);
+
+  const handlePageSizeChange = (size: number) => {
+    navigate(`/?page=1&pageSize=${size}&order=${order}&sort=${sort}`);
+  };
 
   const handlePageChange = (newPage: number) => {
     navigate(
@@ -61,20 +69,6 @@ export const TagsBrowser = () => {
       `/?page=1&pageSize=${pageSize}&order=${changedOrder}&sort=${sortBy}`
     );
   };
-
-  useEffect(() => {
-    if (search === "") {
-      setParams({ ...initParams });
-    } else {
-      const urlParams = convertQueryStringToObject(search);
-      setParams({
-        page: +urlParams.page || initParams.page,
-        pageSize: +urlParams.pageSize || initParams.pageSize,
-        sort: urlParams.sort || initParams.sort,
-        order: (urlParams.order as "asc" | "desc") || initParams.order,
-      });
-    }
-  }, [search]);
 
   return (
     <main>
